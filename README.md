@@ -41,4 +41,4 @@ If you have any questions or suggestions regarding this project, feel free to co
 
 - Mustafa Khalil: mis1st003@gmail.com
 - Zhyar Abubaker: Zhyar.abubakr17@gmail.com
-- Omar Taha: 
+- Omar Taha: humartaha090@gmail.com
