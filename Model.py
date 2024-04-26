@@ -10,10 +10,30 @@ class GameModel:
         self.screen_width = 800
         self.screen_height = 600
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption("Simple 2D Game")
+        pygame.display.set_caption("Air plane game")
+
         # Load cloud image
         self.cloud_image = pygame.image.load("Assets/cloud.png").convert_alpha()
         self.cloud_image = pygame.transform.scale(self.cloud_image, (100, 110))  # Resize to 50x50 pixels
+
+
+        # Menu settings
+
+        self.menu_active = True  # Initially, the menu is active
+        self.start_button = pygame.Rect(300, 200, 200, 50)  # Position and size of start button
+        self.exit_button = pygame.Rect(300, 300, 200, 50)
+
+        # Define button rectangles for difficulty selection
+        self.easy_button = pygame.Rect(300, 200, 200, 50)
+        self.medium_button = pygame.Rect(300, 270, 200, 50)
+        self.hard_button = pygame.Rect(300, 340, 200, 50)
+
+
+        self.difficulty_level = None
+        self.show_difficulty_options = False
+        self.game_started = False
+
+        self.paused = False
 
         # Cloud settings
         self.cloud_spawn_timer = 0
@@ -21,7 +41,6 @@ class GameModel:
         self.cloud_height = 50  # Adjust cloud height as needed
         self.cloud_speed = 2  # Adjust cloud speed as needed
         self.clouds = []
-
 
         # Load background music
         pygame.mixer.music.load("Assets/music1.mp3")
@@ -161,6 +180,7 @@ class GameModel:
         pygame.time.delay(2000)  # Pause for 2 seconds
         pygame.quit()
         quit()
+
     def update_clouds(self):
         self.cloud_spawn_timer += 1
         if self.cloud_spawn_timer >= 300:  # Spawn a cloud every 5 seconds (assuming 60 FPS)
@@ -173,3 +193,17 @@ class GameModel:
     def spawn_cloud(self):
         cloud_y = random.randint(0, self.screen_height - self.cloud_height)
         self.clouds.append([self.screen_width, cloud_y])
+
+    def display_difficulty_selected(self):
+        if self.difficulty_level == "easy":
+            self.player_health = 3
+        elif self.difficulty_level == "medium":
+            self.player_health = 2
+        elif self.difficulty_level == "hard":
+            self.player_health = 1
+
+        difficulty_text = pygame.font.Font(None, 36).render(f"Difficulty Selected: {self.difficulty_level}", True,
+                                                            self.RED)
+        self.screen.blit(difficulty_text, (self.screen_width // 2 - 150, self.screen_height // 2 + 20))
+        pygame.display.flip()
+

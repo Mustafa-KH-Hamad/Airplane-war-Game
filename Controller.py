@@ -13,18 +13,53 @@ class GameController:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif self.model.menu_active:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.model.start_button.collidepoint(mouse_pos):
+                        self.model.menu_active = False
+                        self.model.show_difficulty_options = True  # Set to True to show difficulty options
+            elif self.model.show_difficulty_options:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if self.model.easy_button.collidepoint(mouse_pos):
+                        self.model.difficulty_level = "easy"
+                        self.model.show_difficulty_options = False
+                        self.model.game_started = True
+                        self.model.player_health = 3
+                    elif self.model.medium_button.collidepoint(mouse_pos):
+                        self.model.difficulty_level = "medium"
+                        self.model.show_difficulty_options = False
+                        self.model.game_started = True
+                        self.model.player_health = 2
+                    elif self.model.hard_button.collidepoint(mouse_pos):
+                        self.model.difficulty_level = "hard"
+                        self.model.show_difficulty_options = False
+                        self.model.game_started = True
+                        self.model.player_health = 1
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.model.play_bullet_sound()
                     bullet_y = self.model.player_y + self.model.player_height // 2 - self.model.bullet_height // 2
-                    self.model.bullets.append(pygame.Rect(self.model.player_x + self.model.player_width, bullet_y, self.model.bullet_width, self.model.bullet_height))
+                    self.model.bullets.append(
+                        pygame.Rect(self.model.player_x + self.model.player_width, bullet_y, self.model.bullet_width,
+                                    self.model.bullet_height))
                 elif (event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and self.model.score > 100:
                     self.model.play_bullet_sound()
                     bullet_y1 = self.model.player_y + self.model.player_height // 3 - self.model.bullet_height // 2
                     bullet_y2 = self.model.player_y + 2 * self.model.player_height // 3 - self.model.bullet_height // 2
-                    self.model.bullets.append(pygame.Rect(self.model.player_x + self.model.player_width, bullet_y1, self.model.bullet_width, self.model.bullet_height))
-                    self.model.bullets.append(pygame.Rect(self.model.player_x + self.model.player_width, bullet_y2, self.model.bullet_width, self.model.bullet_height))
+                    self.model.bullets.append(
+                        pygame.Rect(self.model.player_x + self.model.player_width, bullet_y1, self.model.bullet_width,
+                                    self.model.bullet_height))
+                    self.model.bullets.append(
+                        pygame.Rect(self.model.player_x + self.model.player_width, bullet_y2, self.model.bullet_width,
+                                    self.model.bullet_height))
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                    # Toggle the pause state
+                    self.model.paused = not self.model.paused
 
     def update(self):
         # Scroll the background images
@@ -45,6 +80,8 @@ class GameController:
         # Boundaries for player
         self.model.player_y = max(0, min(self.model.player_y, self.model.screen_height - self.model.player_height))
         self.model.player_x = max(0, min(self.model.player_x, self.model.screen_width - self.model.player_width))
+
+
 
         # Player movement
         keys = pygame.key.get_pressed()
@@ -174,18 +211,29 @@ class GameController:
                         pygame.quit()
                         sys.exit()
 
-
     def run(self):
         while True:
             self.handle_events()
-            self.update()
+            if self.model.game_started:  # Start the game only if game_started is True
+                if not self.model.paused:  # Check if the game is not paused
+                    self.update()  # Update game state only if not paused
             self.view.draw_background()
-            self.view.draw_player()
-            self.view.draw_enemies()
-            self.view.draw_bullets()
-            self.view.draw_score()
-            self.view.draw_player_health()
-            self.view.draw_power_ups()
-            self.view.draw_clouds()
+            if self.model.menu_active:
+                self.view.draw_menu()
+            elif self.model.show_difficulty_options:
+                self.view.draw_difficulty_options()
+            else:
+                self.view.draw_player()
+                self.view.draw_enemies()
+                self.view.draw_bullets()
+                self.view.draw_score()
+                self.view.draw_player_health()
+                self.view.draw_power_ups()
+                self.view.draw_clouds()
+                if self.model.paused:  # Check if the game is paused
+                    self.view.draw_paused_text()  # Draw "Paused" text
             self.view.update_display()
             self.clock.tick(60)
+
+
+
