@@ -140,7 +140,7 @@ class GameModel:
     # Function to play bullet sound
     def play_bullet_sound(self):
         bullet_sound = pygame.mixer.Sound("Assets/shoot.wav")
-        bullet_sound.set_volume(0.1)  # Adjust volume as needed
+        bullet_sound.set_volume(0.3)  # Adjust volume as needed
         bullet_sound.play()
 
     # Function to play death animation
@@ -165,21 +165,8 @@ class GameModel:
                 self.death_animation_index = 0
 
     # Function to display "You Died" message
-    def display_game_over(self):
-        game_over_text = pygame.font.Font(None, 36).render("You Died!", True, (255, 0, 0))
-        self.screen.blit(game_over_text, (self.screen_width // 2 - 100, self.screen_height // 2 - 20))
-        pygame.display.flip()
-        pygame.time.delay(2000)  # Pause for 2 seconds
-        pygame.quit()
-        quit()
 
-    def display_game_over_win(self):
-        game_over_win_text = pygame.font.Font(None, 36).render("You Won congrats! GG!", True, (255, 0, 0))
-        self.screen.blit(game_over_win_text, (self.screen_width // 2 - 100, self.screen_height // 2 - 20))
-        pygame.display.flip()
-        pygame.time.delay(2000)  # Pause for 2 seconds
-        pygame.quit()
-        quit()
+
 
     def update_clouds(self):
         self.cloud_spawn_timer += 1

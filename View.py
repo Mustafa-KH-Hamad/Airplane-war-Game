@@ -1,5 +1,6 @@
 import pygame
 
+
 class GameView:
     def __init__(self, model):
         self.model = model
@@ -44,51 +45,89 @@ class GameView:
         pygame.display.flip()
 
     def draw_game_over(self):
-        game_over_text = pygame.font.Font(None, 36).render("You Died!", True, (255, 0, 0))
-        self.screen.blit(game_over_text, (self.model.screen_width // 2 - 100, self.model.screen_height // 2 - 20))
+        background_image = pygame.image.load("Assets/gameover.png").convert()
+        self.screen.blit(background_image, (0, 0))
         pygame.display.flip()
         pygame.time.delay(2000)  # Pause for 2 seconds
-        pygame.quit()
-        quit()
+        self.model.menu_active = True
 
     def draw_game_over_win(self):
-        game_over_win_text = pygame.font.Font(None, 36).render("You Won congrats! GG!", True, (255, 0, 0))
-        self.screen.blit(game_over_win_text, (self.model.screen_width // 2 - 100, self.model.screen_height // 2 - 20))
+        background_image = pygame.image.load("Assets/gamewin.png").convert()
+        self.screen.blit(background_image, (0, 0))
         pygame.display.flip()
         pygame.time.delay(2000)  # Pause for 2 seconds
-        pygame.quit()
-        quit()
+        self.model.menu_active = True
 
     def draw_clouds(self):
         for cloud in self.model.clouds:
             self.screen.blit(self.model.cloud_image, (cloud[0], cloud[1]))
 
     def draw_menu(self):
-        self.screen.fill((255, 255, 255))  # Fill the screen with white color
 
         # Draw start and exit buttons
         start_text = pygame.font.Font(None, 36).render("Start", True, (0, 0, 0))
         exit_text = pygame.font.Font(None, 36).render("Exit", True, (0, 0, 0))
-        pygame.draw.rect(self.screen, (0, 0, 255), self.model.start_button)
-        pygame.draw.rect(self.screen, (0, 0, 255), self.model.exit_button)
-        self.screen.blit(start_text, (350, 215))
-        self.screen.blit(exit_text, (360, 315))
+
+        # Draw buttons at custom positions
+        start_button_rect = pygame.Rect(300, 250, 190, 150)
+        exit_button_rect = pygame.Rect(300, 350, 190, 100)
+
+        pygame.draw.rect(self.screen, (0, 0, 255), start_button_rect)
+        pygame.draw.rect(self.screen, (0, 0, 255), exit_button_rect)
+
+        self.screen.blit(start_text, (start_button_rect.x, start_button_rect.y))
+        self.screen.blit(exit_text, (exit_button_rect.x, exit_button_rect.y))
+
+        # Update model attributes for button detection
+        self.model.start_button = start_button_rect
+        self.model.exit_button = exit_button_rect
+
+        background_image = pygame.image.load("Assets/menu.png").convert()
+        self.screen.blit(background_image, (0, 0))
+
+
+
+
 
     def draw_difficulty_options(self):
-        self.screen.fill((255, 255, 255))  # Fill the screen with white color
+
+
+        # Draw background image
+
 
         # Draw difficulty buttons
+        # Define button texts
         easy_text = pygame.font.Font(None, 36).render("Easy", True, (0, 0, 0))
         medium_text = pygame.font.Font(None, 36).render("Medium", True, (0, 0, 0))
         hard_text = pygame.font.Font(None, 36).render("Hard", True, (0, 0, 0))
-        pygame.draw.rect(self.screen, (0, 255, 0), self.model.easy_button)
-        pygame.draw.rect(self.screen, (0, 255, 0), self.model.medium_button)
-        pygame.draw.rect(self.screen, (0, 255, 0), self.model.hard_button)
-        self.screen.blit(easy_text, (300, 215))
-        self.screen.blit(medium_text, (300, 285))
-        self.screen.blit(hard_text, (300, 355))
+
+        # Define button rectangles
+        easy_button_rect = pygame.Rect(250, 150, 220, 50)
+        medium_button_rect = pygame.Rect(200, 270, 330, 50)
+        hard_button_rect = pygame.Rect(260, 390, 190, 50)
+
+        # Draw buttons
+        pygame.draw.rect(self.screen, (0, 255, 0), easy_button_rect)
+        pygame.draw.rect(self.screen, (0, 255, 0), medium_button_rect)
+        pygame.draw.rect(self.screen, (0, 255, 0), hard_button_rect)
+
+        # Blit button texts
+        self.screen.blit(easy_text, (easy_button_rect.x, easy_button_rect.y))
+        self.screen.blit(medium_text, (medium_button_rect.x, medium_button_rect.y))
+        self.screen.blit(hard_text, (hard_button_rect.x, hard_button_rect.y))
+
+        # Update model attributes for button detection
+        self.model.easy_button = easy_button_rect
+        self.model.medium_button = medium_button_rect
+        self.model.hard_button = hard_button_rect
+
+        background_image = pygame.image.load("Assets/difficulty.png").convert()
+        self.screen.blit(background_image, (0, 0))
 
     def draw_paused_text(self):
+        background_image = pygame.image.load("Assets/pause.png").convert()
+        self.screen.blit(background_image, (0, 0))
+
         paused_text = self.font.render("Paused", True, (255, 0, 0))
         paused_text_rect = paused_text.get_rect(center=(self.model.screen_width // 2, self.model.screen_height // 2))
         self.screen.blit(paused_text, paused_text_rect)

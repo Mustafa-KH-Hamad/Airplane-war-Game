@@ -19,6 +19,9 @@ class GameController:
                     if self.model.start_button.collidepoint(mouse_pos):
                         self.model.menu_active = False
                         self.model.show_difficulty_options = True  # Set to True to show difficulty options
+                    elif self.model.exit_button.collidepoint(mouse_pos):  # Added condition for exit button
+                        pygame.quit()
+                        sys.exit()
             elif self.model.show_difficulty_options:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
@@ -37,8 +40,7 @@ class GameController:
                         self.model.show_difficulty_options = False
                         self.model.game_started = True
                         self.model.player_health = 1
-
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.model.play_bullet_sound()
                     bullet_y = self.model.player_y + self.model.player_height // 2 - self.model.bullet_height // 2
@@ -60,6 +62,23 @@ class GameController:
                 if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                     # Toggle the pause state
                     self.model.paused = not self.model.paused
+            elif self.model.menu_active:  # Check if the menu becomes active again
+                # Reset game state
+                self.model.menu_active = True
+                self.model.start_button = pygame.Rect(300, 200, 200, 50)  # Position and size of start button
+                self.model.exit_button = pygame.Rect(300, 300, 200, 50)
+                self.model.difficulty_level = None
+                self.model.show_difficulty_options = False
+                self.model.game_started = False
+                self.model.paused = False
+                self.model.cloud_spawn_timer = 0
+                self.model.clouds = []
+                self.model.score = 0
+                self.model.player_health = 3
+                self.model.shield_timer = 0
+                self.model.enemies = []
+                self.model.bullets = []
+                self.model.enemy_bullets = []
 
     def update(self):
         # Scroll the background images
@@ -74,8 +93,7 @@ class GameController:
 
         if self.model.score >= 2000:
             self.view.draw_game_over_win()
-            pygame.quit()
-            sys.exit()
+            self.model.menu_active = True
 
         # Boundaries for player
         self.model.player_y = max(0, min(self.model.player_y, self.model.screen_height - self.model.player_height))
@@ -129,6 +147,7 @@ class GameController:
                     self.model.shield_timer = 2000
                 if self.model.player_health <= -1:
                     self.view.draw_game_over()
+                    self.model.menu_active = True
 
         # Remove bullets that go off screen
         self.model.enemy_bullets = [bullet for bullet in self.model.enemy_bullets if bullet.x > 0]
@@ -169,8 +188,7 @@ class GameController:
                     self.model.play_death_animation(enemy[1].x, enemy[1].y)
                     if self.model.player_health <= -1:
                         self.view.draw_game_over()
-                        pygame.quit()
-                        sys.exit()
+                        self.model.menu_active = True
                     self.model.enemies.remove(enemy)
                     break
 
@@ -193,8 +211,7 @@ class GameController:
                     self.model.play_death_animation(enemy[1].x, enemy[1].y)
                     if self.model.player_health <= 0:  # Adjusted condition to retain one more hit
                         self.view.draw_game_over()
-                        pygame.quit()
-                        sys.exit()
+                        self.model.menu_active = True
                     self.model.enemies.remove(enemy)
                     break
 
@@ -208,8 +225,7 @@ class GameController:
                     self.model.shield_timer = 2000  # Resetting shield timer
                     if self.model.player_health <= 0:  # Adjusted condition to retain one more hit
                         self.view.draw_game_over()
-                        pygame.quit()
-                        sys.exit()
+                        self.model.menu_active = True
 
     def run(self):
         while True:
